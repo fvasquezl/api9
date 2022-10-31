@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\SaveArticleRequest;
 use App\Models\Article;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ArticleResource;
 use App\Http\Resources\ArticleCollection;
+use Illuminate\Http\Response;
 
 class ArticleController extends Controller
 {
+    /**
+     * @return ArticleCollection
+     */
     public function index()
     {
         return ArticleCollection::make( Article::all());
@@ -20,37 +25,36 @@ class ArticleController extends Controller
         return ArticleResource::make($article);
     }
 
-    public function store(Request $request)
+    /**
+     * @param SaveArticleRequest $request
+     * @return ArticleResource
+     */
+    public function store(SaveArticleRequest $request)
     {
-        $request->validate([
-            'data.attributes.title' => ['required','min:4'],
-            'data.attributes.slug' => ['required'],
-            'data.attributes.content' => ['required']
-        ]);
-
-       $article = Article::create([
-            'title' => $request->input('data.attributes.title'),
-            'slug' => $request->input('data.attributes.slug'),
-            'content' => $request->input('data.attributes.content')
-
-        ]);
+       $article = Article::create($request->validated());
         return ArticleResource::make($article);
     }
 
-    public function update(Article $article,Request $request)
+    /**
+     * @param Article $article
+     * @param SaveArticleRequest $request
+     * @return ArticleResource
+     */
+    public function update(SaveArticleRequest $request, Article $article)
     {
-        $request->validate([
-            'data.attributes.title' => ['required','min:4'],
-            'data.attributes.slug' => ['required'],
-            'data.attributes.content' => ['required']
-        ]);
-
-        $article->update([
-            'title' => $request->input('data.attributes.title'),
-            'slug' => $request->input('data.attributes.slug'),
-            'content' => $request->input('data.attributes.content')
-        ]);
+        $article->update($request->validated());
 
         return ArticleResource::make($article);
+    }
+
+    /**
+     * @param Article $article
+     * @return Response
+     */
+    public function destroy(Article $article)
+    {
+        $article->delete();
+
+        return response()->noContent();
     }
 }
