@@ -16,30 +16,20 @@ class ArticleController extends Controller
     /**
      * @return ArticleCollection
      */
-    public function index(Request $request)
+    public function index()
     {
-        $articles = Article::query();
 
-        if($request->filled('sort')){
-
-            $sortFields =explode(',', $request->input('sort'));
+        $articles = Article::allowedSorts(['title','content']);
 
 
-            $allowedSorts = ['title','content'];
-
-            foreach ($sortFields as $sortField){
-                $sortDirection= Str::of($sortField)->startsWith('-') ? 'desc':'asc';
-
-                $sortField = ltrim($sortField,'-');
-
-                abort_unless(in_array($sortField,$allowedSorts),400);
-
-                $articles->orderBy($sortField,$sortDirection);
-            }
-
-        }
-        
-        return ArticleCollection::make( $articles->get());
+        return ArticleCollection::make(
+            $articles->paginate(
+                $perPage=\request('page.size',15),
+                $columns=['*'],
+                $pageName='page[number]',
+                $page=\request('page.number',1),
+            )->appends(\request()->only('sort','page.size'))
+        );
     }
 
     public function show(Article $article)
