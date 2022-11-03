@@ -4,12 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\SaveArticleRequest;
 use App\Models\Article;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ArticleResource;
 use App\Http\Resources\ArticleCollection;
 use Illuminate\Http\Response;
-use Illuminate\Support\Str;
+
 
 class ArticleController extends Controller
 {
@@ -21,15 +20,7 @@ class ArticleController extends Controller
 
         $articles = Article::allowedSorts(['title','content']);
 
-
-        return ArticleCollection::make(
-            $articles->paginate(
-                $perPage=\request('page.size',15),
-                $columns=['*'],
-                $pageName='page[number]',
-                $page=\request('page.number',1),
-            )->appends(\request()->only('sort','page.size'))
-        );
+        return ArticleCollection::make($articles->jsonPaginate());
     }
 
     public function show(Article $article)

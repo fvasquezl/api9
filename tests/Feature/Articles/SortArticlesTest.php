@@ -31,6 +31,7 @@ class SortArticlesTest extends TestCase
     /** @test */
     public function can_sort_articles_by_title_descending()
     {
+        $this->withoutExceptionHandling();
         Article::factory()->create(['title' => 'C title']);
         Article::factory()->create(['title' => 'A title']);
         Article::factory()->create(['title' => 'B title']);
