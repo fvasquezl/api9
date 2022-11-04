@@ -19,19 +19,19 @@ class JsonApiTestResponse
                 ->startsWith('data')
                 ? "/".str_replace('.','/',$attribute)
                 : "/data/attributes/{$attribute}";
+
+
             try {
 
                 $this->assertJsonFragment([
-                    'source' => ['pointer' => $pointer]
+                    'source' => ['pointer' => $pointer],
                 ])->assertStatus(422);
 
-            }catch (ExpectationFailedException $e){
-
+            }catch (ExpectationFailedException $e) {
                 PHPUnit::fail("Failed to find a JSON:API validation error for key:'{$attribute}'"
                     .PHP_EOL.PHP_EOL.
                     $e->getMessage()
                 );
-
             }
 
             try {
@@ -55,6 +55,71 @@ class JsonApiTestResponse
                 'content-type','application/vnd.api+json'
             )->assertStatus(422);
 
+        };
+    }
+
+    public function assertJsonApiResource():\Closure
+    {
+        return function ($model,$attributes){
+            /** @var TestResponse $this*/
+
+            $this->assertJson([
+                'data'=> [
+                    'type' => $model->getResourceType(),
+                    'id' => (string) $model->getRouteKey(),
+                    'attributes' => $attributes,
+                    'links' => [
+                        'self' => route('api.v1.'.$model->getResourceType().'.show',$model)
+                    ]
+                ]
+            ])->assertHeader(
+                'Location',
+                route('api.v1.'.$model->getResourceType().'.show',$model)
+            );
+        };
+    }
+
+    public function AssertJsonApiResourceCollection():\Closure
+    {
+        return function ($models, $arrtibutesKeys){
+            /** @var TestResponse $this*/
+
+
+            try {
+                $this->assertJsonStructure([
+                    'data' => [
+                        '*' => [
+                            'attributes' => $arrtibutesKeys
+                        ]
+                    ]
+                ])->assertStatus(422);
+
+            }catch (ExpectationFailedException $e) {
+                PHPUnit::fail("Failed, a JSON:API validation error for Attributes: ".implode(", ", $arrtibutesKeys)
+                    .PHP_EOL.PHP_EOL.
+                    $e->getMessage()
+                );
+            }
+
+
+
+//            $this->assertJsonStructure([
+//                'data' => [
+//                    '*' => [
+//                        'attributes' => $arrtibutesKeys
+//                    ]
+//                ]
+//            ]);
+
+            foreach ($models as $model){
+                $this->assertJsonFragment([
+                    'type' => $model->getResourceType(),
+                    'id' => (string) $model->getRouteKey(),
+                    'links' => [
+                        'self' => route('api.v1.'.$model->getResourceType().'.show',$model)
+                    ]
+                ]);
+            }
         };
     }
 }
