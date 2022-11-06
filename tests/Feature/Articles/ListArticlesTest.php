@@ -34,7 +34,7 @@ class ListArticlesTest extends TestCase
         $response = $this->getJson(route('api.v1.articles.index'));
 
         $response->AssertJsonApiResourceCollection($articles,[
-            'title','slug','contentss'
+            'title','slug','content'
         ]);
 
     }

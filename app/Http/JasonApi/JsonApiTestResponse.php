@@ -81,35 +81,24 @@ class JsonApiTestResponse
 
     public function AssertJsonApiResourceCollection():\Closure
     {
-        return function ($models, $arrtibutesKeys){
+        return function ($models, $attributesKeys){
             /** @var TestResponse $this*/
-
-
             try {
                 $this->assertJsonStructure([
                     'data' => [
                         '*' => [
-                            'attributes' => $arrtibutesKeys
+                            'attributes' => $attributesKeys
                         ]
                     ]
-                ])->assertStatus(422);
+                ]);
 
             }catch (ExpectationFailedException $e) {
-                PHPUnit::fail("Failed, a JSON:API validation error for Attributes: ".implode(", ", $arrtibutesKeys)
+                PHPUnit::fail("Failed, a JSON:API validation error for Attributes: ".implode(", ", $attributesKeys)
                     .PHP_EOL.PHP_EOL.
                     $e->getMessage()
                 );
             }
 
-
-
-//            $this->assertJsonStructure([
-//                'data' => [
-//                    '*' => [
-//                        'attributes' => $arrtibutesKeys
-//                    ]
-//                ]
-//            ]);
 
             foreach ($models as $model){
                 $this->assertJsonFragment([

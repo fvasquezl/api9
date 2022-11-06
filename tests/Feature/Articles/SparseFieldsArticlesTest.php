@@ -94,7 +94,7 @@ class SparseFieldsArticlesTest extends TestCase
             ]
         ]);
 
-        $this->getJson($url)->dump()->assertJsonFragment([
+        $this->getJson($url)->assertJsonFragment([
             'title' => $article->title,
         ])->assertJsonMissing([
             'slug' => $article->slug,
