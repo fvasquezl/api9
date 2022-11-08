@@ -12,7 +12,7 @@ trait MakeJsonApiRequests
 {
     protected bool $formatJsonApiDocument = true;
 
-    public function withoutJsonApiDocumentFormatting()
+    public function withoutJsonApiDocumentFormatting(): void
     {
         $this->formatJsonApiDocument = false;
     }
