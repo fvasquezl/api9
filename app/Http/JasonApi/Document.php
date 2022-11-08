@@ -18,11 +18,15 @@ class Document extends Collection
 
     public function id(string $id): Document
     {
-        $this->items['data']['id'] = (string) $id;
+        if($id){
+            $this->items['data']['id'] = (string) $id;
+        }
         return $this;
     }
     public function attributes(array $attributes): Document
     {
+        unset($attributes['_relationships']);
+
         $this->items['data']['attributes'] = $attributes;
         return $this;
     }
