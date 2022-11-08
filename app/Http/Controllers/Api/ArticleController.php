@@ -16,6 +16,7 @@ class ArticleController extends Controller
 
     public function index():AnonymousResourceCollection
     {
+
         $articles = Article::query()
             ->allowedFilters(['title','content','month','year'])
             ->allowedSorts(['title','content'])
