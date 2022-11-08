@@ -35,7 +35,10 @@ class SaveArticleRequest extends FormRequest
                 new Slug(),
             ],
             'data.attributes.content' => ['required'],
-            'data.relationships' => []
+            'data.relationships.category.data.id' => [
+                Rule::requiredIf(! $this->route('article')),
+                Rule::exists('categories','slug'),
+            ],
         ];
     }
 

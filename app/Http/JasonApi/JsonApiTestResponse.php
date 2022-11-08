@@ -11,14 +11,16 @@ class JsonApiTestResponse
 {
     public function assertJsonApiValidationErrors(): \Closure
     {
-        return function ($attribute){
+        return function ($attribute) {
 
-            /** @var TestResponse $this*/
+            /** @var TestResponse $this */
+            $pointer = "/data/attributes/{$attribute}";
 
-            $pointer= Str::of($attribute)
-                ->startsWith('data')
-                ? "/".str_replace('.','/',$attribute)
-                : "/data/attributes/{$attribute}";
+            if (Str::of($attribute)->startsWith('data')){
+                $pointer = "/" . str_replace('.', '/', $attribute);
+            }elseif (Str::of($attribute)->startsWith('relationships')){
+                $pointer = "/data/" . str_replace('.', '/', $attribute).'/data/id';
+            }
 
 
             try {
