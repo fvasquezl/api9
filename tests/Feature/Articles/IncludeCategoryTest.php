@@ -65,4 +65,27 @@ class IncludeCategoryTest extends TestCase
                 ]
             ]);
     }
+
+    /** @test */
+    public function cannot_include_unknown_relationships()
+    {
+        $article = Article::factory()->create();
+
+        $url = route('api.v1.articles.show',[
+            'article' => $article,
+            'include' => 'unknown,unknown2'
+        ]);
+
+        // articles/ths-slug?include=unknown
+
+        $this->getJson($url)->assertStatus(400); // Bad Request
+
+        $url = route('api.v1.articles.index',[
+            'include' => 'unknown,unknown2'
+        ]);
+
+        // articles?include=unknown
+
+        $this->getJson($url)->assertStatus(400); // Bad Request
+    }
 }
