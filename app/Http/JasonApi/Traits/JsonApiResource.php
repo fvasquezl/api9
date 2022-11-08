@@ -3,6 +3,7 @@
 namespace App\Http\JasonApi\Traits;
 
 use App\Http\JasonApi\Document;
+use App\Http\Resources\CategoryResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection as AnonymousResourceCollectionAlias;
 
 trait JsonApiResource
@@ -11,6 +12,9 @@ trait JsonApiResource
 
     public function toArray($request): array
     {
+        if($request->filled('include')){
+            $this->with['included'] = $this->getIncludes();
+        }
 
         Return Document::type($this->getResourceType())
             ->id($this->resource->getRouteKey())
@@ -20,6 +24,11 @@ trait JsonApiResource
                 'self' => route('api.v1.'.$this->getResourceType().'.show',$this->resource)
             ])
             ->get('data');
+    }
+
+    public function getIncludes()
+    {
+       return [];
     }
 
     public function getRelationshipLinks()

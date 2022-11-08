@@ -23,4 +23,12 @@ class ArticleResource extends JsonResource
         return ['category'];
     }
 
+    public function getIncludes()
+    {
+        return[
+            CategoryResource::make($this->resource->category)
+        ];
+
+    }
+
 }

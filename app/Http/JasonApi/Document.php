@@ -53,8 +53,14 @@ class Document extends Collection
     {
         foreach ($relationships as $key){
             $this->items['data']['relationships'][$key]['links'] = [
-                'self' =>route("api.v1.{$this->items['data']['type']}.relationships.{$key}",$this->items['data']['id']),
-                'related' =>route("api.v1.{$this->items['data']['type']}.{$key}",$this->items['data']['id'])
+                'self' =>route(
+                    "api.v1.{$this->items['data']['type']}.relationships.{$key}",
+                    $this->items['data']['id']
+                ),
+                'related' =>route(
+                    "api.v1.{$this->items['data']['type']}.{$key}",
+                    $this->items['data']['id']
+                )
             ];
         }
         return $this;
