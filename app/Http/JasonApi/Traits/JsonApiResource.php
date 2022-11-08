@@ -15,10 +15,16 @@ trait JsonApiResource
         Return Document::type($this->getResourceType())
             ->id($this->resource->getRouteKey())
             ->attributes($this->filterAttributes($this->toJsonApi()))
+            ->relationshipLinks($this->getRelationshipLinks())
             ->links([
                 'self' => route('api.v1.'.$this->getResourceType().'.show',$this->resource)
             ])
             ->get('data');
+    }
+
+    public function getRelationshipLinks()
+    {
+       return [];
     }
 
     public function withResponse($request, $response): void
